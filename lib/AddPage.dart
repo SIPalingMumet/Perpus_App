@@ -22,12 +22,6 @@ class _AddPageState extends State<AddPage> {
           "Tambah Buku",
           style: TextStyle(fontFamily: "Roboto", color: Colors.white),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
       body: Container(
         color: Colors.blueGrey,

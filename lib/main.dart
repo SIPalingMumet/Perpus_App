@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:perpus_app/AddPage.dart';
+import 'package:perpus_app/login_page.dart';
+import 'package:perpus_app/update_page.dart';
+
+
 
 void main() {
   runApp(MyApp());
@@ -10,16 +14,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Aplikasi Perpus Online',
-      initialRoute: '/',
+      initialRoute: '//',
       routes: {
         '/': (context) => HomePage(),
         '/add': (context) => AddPage(),
         '/display': (context) => DisplayPage(),
+        '//': (context) =>LoginPage(),
+        '///':(content) =>UpdatePage()
       },
     );
   }
 }
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -42,6 +47,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _updateBook(int index, Book updatedBook) {
+    setState(() {
+      books[index] = updatedBook;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,11 +67,29 @@ class _HomePageState extends State<HomePage> {
             child: ListTile(
               title: Text(books[index].title),
               subtitle: Text("Pengarang: ${books[index].author}\nTahun: ${books[index].year}"),
-              trailing: IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  _deleteBook(index);
-                },
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () async {
+                      final updatedBook = await Navigator.pushNamed(
+                        context,
+                        '///',
+                        arguments: {'book': books[index], 'index': index},
+                      );
+                      if (updatedBook != null && updatedBook is Book) {
+                        _updateBook(index, updatedBook);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      _deleteBook(index);
+                    },
+                  ),
+                ],
               ),
               onTap: () {
                 Navigator.pushNamed(
@@ -144,3 +173,4 @@ class Book {
     required this.year,
   });
 }
+
