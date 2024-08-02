@@ -49,73 +49,83 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteBook(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Konfirmasi Hapus'),
-          content: Text('Apakah Anda yakin ingin menghapus buku ini?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Batal'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  addedBooks.removeAt(index);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Hapus'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Konfirmasi Hapus'),
+        content: Text('Apakah Anda yakin ingin menghapus buku ini?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                Book bookToRemove = addedBooks[index];
+                addedBooks.removeAt(index);
+                books.remove(bookToRemove);
+                _filteredBooks = books;  // Sync filteredBooks with books
+              });
+              Navigator.of(context).pop();
+            },
+            child: Text('Hapus'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   void _updateBook(int index, Book updatedBook) {
-    setState(() {
-      addedBooks[index] = updatedBook;
-    });
-  }
+  setState(() {
+    addedBooks[index] = updatedBook;
+    int bookIndex = books.indexWhere((book) => book.title == addedBooks[index].title && book.author == addedBooks[index].author);
+    if (bookIndex != -1) {
+      books[bookIndex] = updatedBook;
+    }
+    _filteredBooks = books;  // Sync filteredBooks with books
+  });
+}
 
   void _confirmEditBook(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Konfirmasi Edit'),
-          content: Text('Apakah Anda yakin ingin mengedit buku ini?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Batal'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final updatedBook = await Navigator.pushNamed(
-                  context,
-                  '///',
-                  arguments: {'book': addedBooks[index], 'index': index},
-                );
-                if (updatedBook != null && updatedBook is Book) {
-                  _updateBook(index, updatedBook);
-                }
-              },
-              child: Text('Edit'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Konfirmasi Edit'),
+        content: Text('Apakah Anda yakin ingin mengedit buku ini?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              final updatedBook = await Navigator.pushNamed(
+                context,
+                '///',
+                arguments: {'book': addedBooks[index], 'index': index},
+              );
+              if (updatedBook != null && updatedBook is Book) {
+                _updateBook(index, updatedBook);
+              }
+            },
+            child: Text('Edit'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   List<Book> _filteredBooks = [];
 
@@ -214,7 +224,7 @@ class DisplayPage extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: Colors.blueGrey,
+        color: Colors.white,
         width: double.infinity,
         height: double.infinity,
         child: Padding(
@@ -225,22 +235,22 @@ class DisplayPage extends StatelessWidget {
               SizedBox(height: 10,),
               Text(
                 "Judul Buku: ${book.title}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 0, 0, 0)),
               ),
               SizedBox(height: 10,),
               Text(
                 "Nama Pengarang: ${book.author}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 0, 0, 0)),
               ),
               SizedBox(height: 10,),
               Text(
                 "Tahun Terbit: ${book.year}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 0, 0, 0)),
               ),
               SizedBox(height: 10,),
               Text(
                 "Deskripsi: ${book.description}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 0, 0, 0)),
               ),
             ],
           ),

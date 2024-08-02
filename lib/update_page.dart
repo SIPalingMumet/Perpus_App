@@ -68,7 +68,7 @@ class _UpdatePageState extends State<UpdatePage> {
         ),
       ),
       body: Container(
-        color: Colors.blueGrey,
+        color: Colors.white,
         width: double.infinity,
         height: double.infinity,
         child: Padding(

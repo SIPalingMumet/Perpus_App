@@ -54,7 +54,7 @@ class _AddPageState extends State<AddPage> {
         ),
       ),
       body: Container(
-        color: Colors.blueGrey,
+        color: Colors.white,
         width: double.infinity,
         height: double.infinity,
         child: Padding(
