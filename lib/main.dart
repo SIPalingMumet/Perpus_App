@@ -40,94 +40,98 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   List<Book> books = [];
   List<Book> addedBooks = [];
+  List<Book> _filteredBooks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredBooks = books;
+  }
 
   void _addBook(Book book) {
     setState(() {
       books.add(book);
       addedBooks.add(book);
+      _filteredBooks = books; // Sync filteredBooks with books
     });
   }
 
   void _deleteBook(int index) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Konfirmasi Hapus'),
-        content: Text('Apakah Anda yakin ingin menghapus buku ini?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Batal'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                Book bookToRemove = addedBooks[index];
-                addedBooks.removeAt(index);
-                books.remove(bookToRemove);
-                _filteredBooks = books;  // Sync filteredBooks with books
-              });
-              Navigator.of(context).pop();
-            },
-            child: Text('Hapus'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi Hapus'),
+          content: Text('Apakah Anda yakin ingin menghapus buku ini?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  Book bookToRemove = addedBooks[index];
+                  addedBooks.removeAt(index);
+                  books.remove(bookToRemove);
+                  _filteredBooks = books; // Sync filteredBooks with books
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Hapus'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _updateBook(int index, Book updatedBook) {
-  setState(() {
-    addedBooks[index] = updatedBook;
-    int bookIndex = books.indexWhere((book) => book.title == addedBooks[index].title && book.author == addedBooks[index].author);
-    if (bookIndex != -1) {
-      books[bookIndex] = updatedBook;
-    }
-    _filteredBooks = books;  // Sync filteredBooks with books
-  });
-}
+    setState(() {
+      addedBooks[index] = updatedBook;
+      int bookIndex = books.indexWhere((book) => book.title == updatedBook.title && book.author == updatedBook.author);
+      if (bookIndex != -1) {
+        books[bookIndex] = updatedBook;
+      }
+      _filteredBooks = books; // Sync filteredBooks with books
+    });
+  }
 
   void _confirmEditBook(int index) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Konfirmasi Edit'),
-        content: Text('Apakah Anda yakin ingin mengedit buku ini?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Batal'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final updatedBook = await Navigator.pushNamed(
-                context,
-                '///',
-                arguments: {'book': addedBooks[index], 'index': index},
-              );
-              if (updatedBook != null && updatedBook is Book) {
-                _updateBook(index, updatedBook);
-              }
-            },
-            child: Text('Edit'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-
-  List<Book> _filteredBooks = [];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi Edit'),
+          content: Text('Apakah Anda yakin ingin mengedit buku ini?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final updatedBook = await Navigator.pushNamed(
+                  context,
+                  '///',
+                  arguments: {'book': addedBooks[index], 'index': index},
+                );
+                if (updatedBook != null && updatedBook is Book) {
+                  _updateBook(index, updatedBook);
+                }
+              },
+              child: Text('Edit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _searchBooks(String query) {
     final filteredBooks = books.where((book) {
@@ -159,12 +163,6 @@ class _HomePageState extends State<HomePage> {
       default:
         return Container();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredBooks = books;
   }
 
   @override
