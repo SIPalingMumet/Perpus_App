@@ -16,13 +16,13 @@ class _AddPageState extends State<AddPage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _validateTitle(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Judul buku tidak boleh kosong';
-    } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-      return 'Judul buku hanya boleh mengandung huruf';
-    }
-    return null;
+  if (value == null || value.isEmpty) {
+    return 'Judul buku tidak boleh kosong';
+  } else if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
+    return 'Judul buku hanya boleh mengandung huruf, angka, dan spasi';
   }
+  return null;
+}
 
   String? _validateAuthor(String? value) {
     if (value == null || value.isEmpty) {
