@@ -12,17 +12,18 @@ class _AddPageState extends State<AddPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _authorController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   String? _validateTitle(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Judul buku tidak boleh kosong';
-  } else if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
-    return 'Judul buku hanya boleh mengandung huruf, angka, dan spasi';
+    if (value == null || value.isEmpty) {
+      return 'Judul buku tidak boleh kosong';
+    } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+      return 'Judul buku hanya boleh mengandung huruf';
+    }
+    return null;
   }
-  return null;
-}
 
   String? _validateAuthor(String? value) {
     if (value == null || value.isEmpty) {
@@ -90,6 +91,14 @@ class _AddPageState extends State<AddPage> {
                   keyboardType: TextInputType.number,
                   validator: _validateYear,
                 ),
+                SizedBox(height: 10,),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    labelText: "Masukan Deskripsi Buku",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
                 SizedBox(height: 20,),
                 ElevatedButton(
                   onPressed: () {
@@ -98,6 +107,7 @@ class _AddPageState extends State<AddPage> {
                         title: _titleController.text,
                         author: _authorController.text,
                         year: _yearController.text,
+                        description: _descriptionController.text,
                       );
                       Navigator.pop(context, newBook);
                     } else {

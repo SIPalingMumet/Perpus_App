@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:perpus_app/AddPage.dart';
 import 'package:perpus_app/login_page.dart';
-import 'package:perpus_app/splash.dart';
 import 'package:perpus_app/update_page.dart';
+import 'package:perpus_app/splash.dart';
+import 'package:perpus_app/book_list_page.dart';
+import 'package:perpus_app/added_books_page.dart';
+import 'package:perpus_app/profil_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,14 +16,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Aplikasi Perpus Online',
-      initialRoute: '////',
+      initialRoute: '/splash',
       routes: {
         '/': (context) => HomePage(),
         '/add': (context) => AddPage(),
         '/display': (context) => DisplayPage(),
         '//': (context) => LoginPage(),
         '///': (context) => UpdatePage(),
-        '////': (context) => SplashScreen()
+        '/splash': (context) => SplashScreen(),
       },
     );
   }
@@ -34,11 +37,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
   List<Book> books = [];
+  List<Book> addedBooks = [];
 
   void _addBook(Book book) {
     setState(() {
       books.add(book);
+      addedBooks.add(book);
     });
   }
 
@@ -111,49 +117,55 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  List<Book> _filteredBooks = [];
+
+  void _searchBooks(String query) {
+    final filteredBooks = books.where((book) {
+      final bookTitleLower = book.title.toLowerCase();
+      final bookAuthorLower = book.author.toLowerCase();
+      final searchLower = query.toLowerCase();
+      return bookTitleLower.contains(searchLower) || bookAuthorLower.contains(searchLower);
+    }).toList();
+
+    setState(() {
+      _filteredBooks = filteredBooks;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Widget _buildPage() {
+    switch (_selectedIndex) {
+      case 0:
+        return BookListPage(books: _filteredBooks.isEmpty ? books : _filteredBooks, onDeleteBook: _deleteBook, onEditBook: _confirmEditBook, onSearch: _searchBooks);
+      case 1:
+        return AddedBooksPage(books: addedBooks);
+      case 2:
+        return ProfilePage();
+      default:
+        return Container();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredBooks = books;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Aplikasi Perpus Online"),
         backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false
+        automaticallyImplyLeading: false,
       ),
-      body: ListView.builder(
-        itemCount: books.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(books[index].title),
-              subtitle: Text("Pengarang: ${books[index].author}\nTahun: ${books[index].year}"),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _confirmEditBook(index);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _deleteBook(index);
-                    },
-                  ),
-                ],
-              ),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/display',
-                  arguments: books[index],
-                );
-              },
-            ),
-          );
-        },
-      ),
+      body: _buildPage(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final newBook = await Navigator.pushNamed(context, '/add');
@@ -162,6 +174,25 @@ class _HomePageState extends State<HomePage> {
           }
         },
         child: Icon(Icons.add),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Books',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Added Books',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -206,6 +237,11 @@ class DisplayPage extends StatelessWidget {
                 "Tahun Terbit: ${book.year}",
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
+              SizedBox(height: 10,),
+              Text(
+                "Deskripsi: ${book.description}",
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
             ],
           ),
         ),
@@ -218,10 +254,12 @@ class Book {
   final String title;
   final String author;
   final String year;
+  final String description;
 
   Book({
     required this.title,
     required this.author,
     required this.year,
+    required this.description,
   });
 }
