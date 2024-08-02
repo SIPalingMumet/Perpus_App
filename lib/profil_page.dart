@@ -7,6 +7,7 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('User Profile'),
         backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false
       ),
       body: Center(
         child: Column(
