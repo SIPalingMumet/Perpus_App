@@ -3,11 +3,9 @@ import 'package:perpus_app/main.dart';
 
 class BookListPage extends StatelessWidget {
   final List<Book> books;
-  final Function(int) onDeleteBook;
-  final Function(int) onEditBook;
   final Function(String) onSearch;
 
-  BookListPage({required this.books, required this.onDeleteBook, required this.onEditBook, required this.onSearch});
+  BookListPage({required this.books, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -31,23 +29,6 @@ class BookListPage extends StatelessWidget {
                 child: ListTile(
                   title: Text(books[index].title),
                   subtitle: Text("Pengarang: ${books[index].author}\nTahun: ${books[index].year}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          onEditBook(index);
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          onDeleteBook(index);
-                        },
-                      ),
-                    ],
-                  ),
                   onTap: () {
                     Navigator.pushNamed(
                       context,

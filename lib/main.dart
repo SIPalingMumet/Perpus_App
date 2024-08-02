@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  books.removeAt(index);
+                  addedBooks.removeAt(index);
                 });
                 Navigator.of(context).pop();
               },
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
 
   void _updateBook(int index, Book updatedBook) {
     setState(() {
-      books[index] = updatedBook;
+      addedBooks[index] = updatedBook;
     });
   }
 
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                 final updatedBook = await Navigator.pushNamed(
                   context,
                   '///',
-                  arguments: {'book': books[index], 'index': index},
+                  arguments: {'book': addedBooks[index], 'index': index},
                 );
                 if (updatedBook != null && updatedBook is Book) {
                   _updateBook(index, updatedBook);
@@ -141,9 +141,9 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPage() {
     switch (_selectedIndex) {
       case 0:
-        return BookListPage(books: _filteredBooks.isEmpty ? books : _filteredBooks, onDeleteBook: _deleteBook, onEditBook: _confirmEditBook, onSearch: _searchBooks);
+        return BookListPage(books: _filteredBooks.isEmpty ? books : _filteredBooks, onSearch: _searchBooks);
       case 1:
-        return AddedBooksPage(books: addedBooks);
+        return AddedBooksPage(books: addedBooks, onDeleteBook: _deleteBook, onEditBook: _confirmEditBook);
       case 2:
         return ProfilePage();
       default:
