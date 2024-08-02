@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:perpus_app/AddPage.dart';
 import 'package:perpus_app/login_page.dart';
+import 'package:perpus_app/splash.dart';
 import 'package:perpus_app/update_page.dart';
-
-
 
 void main() {
   runApp(MyApp());
@@ -19,12 +18,14 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/add': (context) => AddPage(),
         '/display': (context) => DisplayPage(),
-        '//': (context) =>LoginPage(),
-        '///':(content) =>UpdatePage()
+        '//': (context) => LoginPage(),
+        '///': (context) => UpdatePage(),
+        '////': (context) => SplashScreen()
       },
     );
   }
 }
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -42,9 +43,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteBook(int index) {
-    setState(() {
-      books.removeAt(index);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi Hapus'),
+          content: Text('Apakah Anda yakin ingin menghapus buku ini?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  books.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Hapus'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _updateBook(int index, Book updatedBook) {
@@ -53,12 +77,47 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _confirmEditBook(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi Edit'),
+          content: Text('Apakah Anda yakin ingin mengedit buku ini?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final updatedBook = await Navigator.pushNamed(
+                  context,
+                  '///',
+                  arguments: {'book': books[index], 'index': index},
+                );
+                if (updatedBook != null && updatedBook is Book) {
+                  _updateBook(index, updatedBook);
+                }
+              },
+              child: Text('Edit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Aplikasi Perpus Online"),
         backgroundColor: Colors.blue,
+        automaticallyImplyLeading: false
       ),
       body: ListView.builder(
         itemCount: books.length,
@@ -72,15 +131,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   IconButton(
                     icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () async {
-                      final updatedBook = await Navigator.pushNamed(
-                        context,
-                        '///',
-                        arguments: {'book': books[index], 'index': index},
-                      );
-                      if (updatedBook != null && updatedBook is Book) {
-                        _updateBook(index, updatedBook);
-                      }
+                    onPressed: () {
+                      _confirmEditBook(index);
                     },
                   ),
                   IconButton(
@@ -173,4 +225,3 @@ class Book {
     required this.year,
   });
 }
-
