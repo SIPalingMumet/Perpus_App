@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/add': (context) => AddPage(),
         '/display': (context) => DisplayPage(),
-        '//': (context) => LoginPage(),
-        '///': (context) => UpdatePage(),
+        '/login': (context) => LoginPage(),
+        '/update': (context) => UpdatePage(),
         '/splash': (context) => SplashScreen(),
       },
     );

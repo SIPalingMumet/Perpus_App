@@ -5,9 +5,9 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('User Profile'),
         backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false
       ),
       body: Center(
         child: Column(
@@ -47,7 +47,7 @@ class ProfilePage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.pushReplacementNamed(context, '//');
+                Navigator.pushReplacementNamed(context, '/login');
               },
               child: Text('Logout'),
             ),
