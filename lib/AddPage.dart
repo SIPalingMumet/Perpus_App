@@ -20,7 +20,7 @@ class _AddPageState extends State<AddPage> {
   String? _validateTitle(String? value) {
     if (value == null || value.isEmpty) {
       return 'Judul buku tidak boleh kosong';
-    } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+    } else if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
       return 'Judul buku hanya boleh mengandung huruf';
     }
     return null;
