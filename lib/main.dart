@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:perpus_app/AddPage.dart';
 import 'package:perpus_app/login_page.dart';
-import 'package:perpus_app/splash.dart';
 import 'package:perpus_app/update_page.dart';
+import 'package:perpus_app/splash.dart';
+import 'package:perpus_app/book_list_page.dart';
+import 'package:perpus_app/profil_page.dart';
+import 'package:perpus_app/display_book.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,14 +16,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Aplikasi Perpus Online',
-      initialRoute: '////',
+      initialRoute: '/splash',
       routes: {
         '/': (context) => HomePage(),
         '/add': (context) => AddPage(),
-        '/display': (context) => DisplayPage(),
-        '//': (context) => LoginPage(),
-        '///': (context) => UpdatePage(),
-        '////': (context) => SplashScreen()
+        '/login': (context) => LoginPage(),
+        '/update': (context) => UpdatePage(),
+        '/splash': (context) => SplashScreen(),
       },
     );
   }
@@ -34,82 +36,98 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
   List<Book> books = [];
+  List<Book> _filteredBooks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredBooks = books;
+  }
 
   void _addBook(Book book) {
     setState(() {
       books.add(book);
+      _filteredBooks = books; // Sync filteredBooks with books
     });
   }
 
-  void _deleteBook(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Konfirmasi Hapus'),
-          content: Text('Apakah Anda yakin ingin menghapus buku ini?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Batal'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  books.removeAt(index);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Hapus'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _updateBook(int index, Book updatedBook) {
+  void _deleteBook(Book book) {
     setState(() {
-      books[index] = updatedBook;
+      books.remove(book);
+      _filteredBooks = books; // Sync filteredBooks with books
     });
   }
 
-  void _confirmEditBook(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Konfirmasi Edit'),
-          content: Text('Apakah Anda yakin ingin mengedit buku ini?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Batal'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final updatedBook = await Navigator.pushNamed(
-                  context,
-                  '///',
-                  arguments: {'book': books[index], 'index': index},
-                );
-                if (updatedBook != null && updatedBook is Book) {
-                  _updateBook(index, updatedBook);
-                }
-              },
-              child: Text('Edit'),
-            ),
-          ],
-        );
-      },
-    );
+  void _updateBook(Book oldBook, Book updatedBook) {
+    setState(() {
+      int bookIndex = books.indexOf(oldBook);
+      if (bookIndex != -1) {
+        books[bookIndex] = updatedBook;
+      }
+      _filteredBooks = books; // Sync filteredBooks with books
+    });
   }
+
+  void _searchBooks(String query) {
+    final filteredBooks = books.where((book) {
+      final bookTitleLower = book.title.toLowerCase();
+      final bookAuthorLower = book.author.toLowerCase();
+      final searchLower = query.toLowerCase();
+      return bookTitleLower.contains(searchLower) || bookAuthorLower.contains(searchLower);
+    }).toList();
+
+    setState(() {
+      _filteredBooks = filteredBooks;
+    });
+  }
+
+  void _filterBooks(bool? isFiction) {
+    if (isFiction == null) {
+      setState(() {
+        _filteredBooks = books;
+      });
+    } else {
+      setState(() {
+        _filteredBooks = books.where((book) => book.isFiction == isFiction).toList();
+      });
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Widget _buildPage() {
+    switch (_selectedIndex) {
+      case 0:
+        return BookListPage(
+          books: _filteredBooks,
+          onSearch: _searchBooks,
+          onFilter: _filterBooks,
+          onBookSelected: (Book selectedBook) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DisplayPage(
+                  book: selectedBook,
+                  onDelete: _deleteBook,
+                  onUpdate: _updateBook,
+                ),
+              ),
+            );
+          },
+        );
+      case 1:
+        return ProfilePage();
+      default:
+        return Container();
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,43 +135,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Aplikasi Perpus Online"),
         backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false
+        automaticallyImplyLeading: false,
       ),
-      body: ListView.builder(
-        itemCount: books.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(books[index].title),
-              subtitle: Text("Pengarang: ${books[index].author}\nTahun: ${books[index].year}"),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      _confirmEditBook(index);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _deleteBook(index);
-                    },
-                  ),
-                ],
-              ),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/display',
-                  arguments: books[index],
-                );
-              },
-            ),
-          );
-        },
-      ),
+      body: _buildPage(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final newBook = await Navigator.pushNamed(context, '/add');
@@ -163,52 +147,20 @@ class _HomePageState extends State<HomePage> {
         },
         child: Icon(Icons.add),
       ),
-    );
-  }
-}
-
-class DisplayPage extends StatelessWidget {
-  const DisplayPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final Book book = ModalRoute.of(context)!.settings.arguments as Book;
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text(
-          "Detail Buku",
-          style: TextStyle(fontFamily: "Roboto", color: Colors.white),
-        ),
-      ),
-      body: Container(
-        color: Colors.blueGrey,
-        width: double.infinity,
-        height: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10,),
-              Text(
-                "Judul Buku: ${book.title}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              SizedBox(height: 10,),
-              Text(
-                "Nama Pengarang: ${book.author}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              SizedBox(height: 10,),
-              Text(
-                "Tahun Terbit: ${book.year}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Books',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -218,10 +170,14 @@ class Book {
   final String title;
   final String author;
   final String year;
+  final String description;
+  final bool isFiction;
 
   Book({
     required this.title,
     required this.author,
     required this.year,
+    required this.description,
+    required this.isFiction,
   });
 }

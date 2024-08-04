@@ -11,7 +11,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '//');
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 
@@ -20,14 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: Center(
-        child: Text(
-          'Aplikasi Perpus Online',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: Image.asset('assets/images/download.png'), // Pastikan gambar ini ada di folder assets dan terdaftar di pubspec.yaml
       ),
     );
   }
