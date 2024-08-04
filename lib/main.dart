@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/add': (context) => AddPage(),
-        '/display': (context) => DisplayPage(),
         '/login': (context) => LoginPage(),
         '/update': (context) => UpdatePage(),
         '/splash': (context) => SplashScreen(),
@@ -105,13 +104,30 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPage() {
     switch (_selectedIndex) {
       case 0:
-        return BookListPage(books: _filteredBooks, onSearch: _searchBooks, onFilter: _filterBooks);
+        return BookListPage(
+          books: _filteredBooks,
+          onSearch: _searchBooks,
+          onFilter: _filterBooks,
+          onBookSelected: (Book selectedBook) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DisplayPage(
+                  book: selectedBook,
+                  onDelete: _deleteBook,
+                  onUpdate: _updateBook,
+                ),
+              ),
+            );
+          },
+        );
       case 1:
         return ProfilePage();
       default:
         return Container();
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +171,7 @@ class Book {
   final String author;
   final String year;
   final String description;
-  final bool isFiction; // Add this field
+  final bool isFiction;
 
   Book({
     required this.title,

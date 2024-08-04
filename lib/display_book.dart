@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:perpus_app/main.dart';
 
 class DisplayPage extends StatelessWidget {
-  const DisplayPage({super.key});
+  final Book book;
+  final Function(Book) onDelete;
+  final Function(Book, Book) onUpdate;
+
+  const DisplayPage({
+    super.key,
+    required this.book,
+    required this.onDelete,
+    required this.onUpdate,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final Book book = ModalRoute.of(context)!.settings.arguments as Book;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -48,20 +55,78 @@ class DisplayPage extends StatelessWidget {
               SizedBox(height: 20,),
               ElevatedButton(
                 onPressed: () async {
-                  final updatedBook = await Navigator.pushNamed(
-                    context,
-                    '/update',
-                    arguments: {'book': book},
+                  final confirmUpdate = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Konfirmasi Edit"),
+                        content: Text("Apakah Anda yakin ingin mengedit buku ini?"),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("Batal"),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text("Ya"),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
-                  if (updatedBook != null && updatedBook is Book) {
-                    // Update book logic here
+
+                  if (confirmUpdate == true) {
+                    final updatedBook = await Navigator.pushNamed(
+                      context,
+                      '/update',
+                      arguments: book,
+                    );
+
+                    if (updatedBook != null && updatedBook is Book) {
+                      onUpdate(book, updatedBook);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Buku berhasil diperbarui!")),
+                      );
+                      Navigator.of(context).pop();
+                    }
                   }
                 },
                 child: Text("Edit"),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Delete book logic here
+                onPressed: () async {
+                  final confirmDelete = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Konfirmasi Hapus"),
+                        content: Text("Apakah Anda yakin ingin menghapus buku ini?"),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text("Batal"),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text("Ya"),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirmDelete == true) {
+                    onDelete(book);
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  }
                 },
                 child: Text("Delete"),
               ),

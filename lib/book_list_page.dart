@@ -5,8 +5,15 @@ class BookListPage extends StatelessWidget {
   final List<Book> books;
   final Function(String) onSearch;
   final Function(bool?) onFilter;
+  final Function(Book) onBookSelected;
 
-  BookListPage({required this.books, required this.onSearch, required this.onFilter});
+  const BookListPage({
+    Key? key,
+    required this.books,
+    required this.onSearch,
+    required this.onFilter,
+    required this.onBookSelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +57,13 @@ class BookListPage extends StatelessWidget {
               : ListView.builder(
                   itemCount: books.length,
                   itemBuilder: (context, index) {
+                    final book = books[index];
                     return Card(
                       child: ListTile(
-                        title: Text(books[index].title),
-                        subtitle: Text("Pengarang: ${books[index].author}\nTahun: ${books[index].year}"),
+                        title: Text(book.title),
+                        subtitle: Text("Pengarang: ${book.author}\nTahun: ${book.year}"),
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/display',
-                            arguments: books[index],
-                          );
+                          onBookSelected(book); // Use the callback with the selected book
                         },
                       ),
                     );
