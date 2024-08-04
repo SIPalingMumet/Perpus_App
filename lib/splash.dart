@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.transparent,
       body: Center(
         child: Image.asset('assets/images/download.png'), // Pastikan gambar ini ada di folder assets dan terdaftar di pubspec.yaml
       ),
