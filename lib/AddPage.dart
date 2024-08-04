@@ -21,7 +21,7 @@ class _AddPageState extends State<AddPage> {
     if (value == null || value.isEmpty) {
       return 'Judul buku tidak boleh kosong';
     } else if (!RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(value)) {
-      return 'Judul buku hanya boleh mengandung huruf';
+      return 'Judul buku hanya boleh mengandung huruf dan angka';
     }
   return null;
 }
