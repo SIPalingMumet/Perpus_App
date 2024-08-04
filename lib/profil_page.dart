@@ -10,11 +10,11 @@ class ProfilePage extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/user.png'), // Ensure this image is available in assets folder
+              backgroundImage: AssetImage('assets/download(1).jpg'), // Ensure this image is available in assets folder
             ),
             SizedBox(height: 20),
             Text(
-              'Nama Pengguna',
+              'User/01',
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 20),

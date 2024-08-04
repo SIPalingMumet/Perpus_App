@@ -20,14 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: Center(
-        child: Text(
-          'Aplikasi Perpus Online',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: Image.asset('assets/download.png'), // Pastikan gambar ini ada di folder assets dan terdaftar di pubspec.yaml
       ),
     );
   }
