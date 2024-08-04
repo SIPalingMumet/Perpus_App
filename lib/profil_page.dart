@@ -40,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
               ),
             ],
           ),
@@ -52,13 +53,65 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             TextButton(
               onPressed: () {
-                setState(() {
-                  _name = nameController.text;
-                  _email = emailController.text;
-                });
-                Navigator.of(context).pop();
+                // Validate email input
+                if (emailController.text.contains('@')) {
+                  setState(() {
+                    _name = nameController.text;
+                    _email = emailController.text;
+                  });
+                  Navigator.of(context).pop();
+                } else {
+                  _showInvalidEmailDialog(context);
+                }
               },
               child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showInvalidEmailDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Invalid Email'),
+          content: Text('Please enter a valid email address containing "@"'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmChangeProfilePicture(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Change Profile Picture'),
+          content: Text('Are you sure you want to change your profile picture?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cancel action
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _pickImage();
+                Navigator.of(context).pop(); // Confirm action
+              },
+              child: Text('Yes'),
             ),
           ],
         );
@@ -69,16 +122,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: _pickImage,
+              onTap: () {
+                _confirmChangeProfilePicture(context);
+              },
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: _image != null
