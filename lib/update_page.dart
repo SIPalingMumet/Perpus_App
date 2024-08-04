@@ -13,22 +13,26 @@ class _UpdatePageState extends State<UpdatePage> {
   final TextEditingController _authorController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  bool _isFiction = true; // Add this field
+  bool _isFiction = true; // Initialize this with a default value
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Extract the Book object from the arguments passed to this route
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     final Book book = args['book'];
+    
+    // Populate the form fields with the book's existing details
     _titleController.text = book.title;
     _authorController.text = book.author;
     _yearController.text = book.year;
     _descriptionController.text = book.description;
-    _isFiction = book.isFiction; // Initialize with book's isFiction value
+    _isFiction = book.isFiction; // Set the isFiction value
   }
 
+  // Validators for form fields
   String? _validateTitle(String? value) {
     if (value == null || value.isEmpty) {
       return 'Judul buku tidak boleh kosong';
@@ -58,8 +62,8 @@ class _UpdatePageState extends State<UpdatePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Extract the Book object from the arguments passed to this route
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-    final int index = args['index'];
 
     return Scaffold(
       appBar: AppBar(
@@ -152,6 +156,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      // Create an updated book object
                       final updatedBook = Book(
                         title: _titleController.text,
                         author: _authorController.text,
@@ -159,8 +164,10 @@ class _UpdatePageState extends State<UpdatePage> {
                         description: _descriptionController.text,
                         isFiction: _isFiction,
                       );
+                      // Pop the page with the updated book as the result
                       Navigator.pop(context, updatedBook);
                     } else {
+                      // Show a snackbar if validation fails
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text("Silakan periksa kembali inputan Anda."),

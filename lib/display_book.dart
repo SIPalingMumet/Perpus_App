@@ -5,6 +5,7 @@ class DisplayPage extends StatelessWidget {
   final Book book;
   final Function(Book) onDelete;
   final Function(Book, Book) onUpdate;
+  
 
   const DisplayPage({
     super.key,
@@ -53,82 +54,63 @@ class DisplayPage extends StatelessWidget {
                 style: TextStyle(fontSize: 20, color: const Color.fromARGB(255, 0, 0, 0)),
               ),
               SizedBox(height: 20,),
-              ElevatedButton(
-                onPressed: () async {
-                  final confirmUpdate = await showDialog<bool>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Konfirmasi Edit"),
-                        content: Text("Apakah Anda yakin ingin mengedit buku ini?"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text("Batal"),
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                          ),
-                          TextButton(
-                            child: Text("Ya"),
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                        ],
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      // This is where you navigate to the UpdatePage
+                      final updatedBook = await Navigator.pushNamed(
+                        context,
+                        '/update',
+                        arguments: {'book': book},  // Pass the book as a Map
                       );
+
+                      if (updatedBook != null && updatedBook is Book) {
+                        onUpdate(book, updatedBook);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Buku berhasil diperbarui!")),
+                        );
+                        Navigator.of(context).pop();
+                      }
                     },
-                  );
-
-                  if (confirmUpdate == true) {
-                    final updatedBook = await Navigator.pushNamed(
-                      context,
-                      '/update',
-                      arguments: book,
-                    );
-
-                    if (updatedBook != null && updatedBook is Book) {
-                      onUpdate(book, updatedBook);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Buku berhasil diperbarui!")),
+                    child: Text("Edit"),
+                  ),
+                  SizedBox(height: 10), // Add space between buttons
+                  ElevatedButton(
+                    onPressed: () async {
+                      final confirmDelete = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Konfirmasi Hapus"),
+                            content: Text("Apakah Anda yakin ingin menghapus buku ini?"),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text("Batal"),
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                              ),
+                              TextButton(
+                                child: Text("Ya"),
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
-                      Navigator.of(context).pop();
-                    }
-                  }
-                },
-                child: Text("Edit"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final confirmDelete = await showDialog<bool>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Konfirmasi Hapus"),
-                        content: Text("Apakah Anda yakin ingin menghapus buku ini?"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text("Batal"),
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                          ),
-                          TextButton(
-                            child: Text("Ya"),
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                        ],
-                      );
+
+                      if (confirmDelete == true) {
+                        onDelete(book);
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      }
                     },
-                  );
-
-                  if (confirmDelete == true) {
-                    onDelete(book);
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  }
-                },
-                child: Text("Delete"),
+                    child: Text("Delete"),
+                  ),
+                ],
               ),
             ],
           ),
