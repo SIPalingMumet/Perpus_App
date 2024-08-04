@@ -8,8 +8,13 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: AssetImage('assets/user.png'), // Ensure this image is available in assets folder
+            ),
+            SizedBox(height: 20),
             Text(
-              'User Profile',
+              'Nama Pengguna',
               style: TextStyle(fontSize: 24),
             ),
             SizedBox(height: 20),

@@ -13,6 +13,7 @@ class _UpdatePageState extends State<UpdatePage> {
   final TextEditingController _authorController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  bool _isFiction = true; // Add this field
 
   final _formKey = GlobalKey<FormState>();
 
@@ -25,6 +26,7 @@ class _UpdatePageState extends State<UpdatePage> {
     _authorController.text = book.author;
     _yearController.text = book.year;
     _descriptionController.text = book.description;
+    _isFiction = book.isFiction; // Initialize with book's isFiction value
   }
 
   String? _validateTitle(String? value) {
@@ -113,6 +115,39 @@ class _UpdatePageState extends State<UpdatePage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+                SizedBox(height: 10,),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ListTile(
+                        title: const Text('Fiksi'),
+                        leading: Radio<bool>(
+                          value: true,
+                          groupValue: _isFiction,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isFiction = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListTile(
+                        title: const Text('Non-Fiksi'),
+                        leading: Radio<bool>(
+                          value: false,
+                          groupValue: _isFiction,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isFiction = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 20,),
                 ElevatedButton(
                   onPressed: () {
@@ -122,6 +157,7 @@ class _UpdatePageState extends State<UpdatePage> {
                         author: _authorController.text,
                         year: _yearController.text,
                         description: _descriptionController.text,
+                        isFiction: _isFiction,
                       );
                       Navigator.pop(context, updatedBook);
                     } else {

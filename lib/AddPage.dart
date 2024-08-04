@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:perpus_app/main.dart'; // Import the main.dart file to access the Book class
+import 'package:perpus_app/main.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -13,6 +13,7 @@ class _AddPageState extends State<AddPage> {
   final TextEditingController _authorController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  bool _isFiction = true;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -99,6 +100,39 @@ class _AddPageState extends State<AddPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+                SizedBox(height: 10,),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ListTile(
+                        title: const Text('Fiksi'),
+                        leading: Radio<bool>(
+                          value: true,
+                          groupValue: _isFiction,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isFiction = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListTile(
+                        title: const Text('Non-Fiksi'),
+                        leading: Radio<bool>(
+                          value: false,
+                          groupValue: _isFiction,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isFiction = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 20,),
                 ElevatedButton(
                   onPressed: () {
@@ -108,6 +142,7 @@ class _AddPageState extends State<AddPage> {
                         author: _authorController.text,
                         year: _yearController.text,
                         description: _descriptionController.text,
+                        isFiction: _isFiction,
                       );
                       Navigator.pop(context, newBook);
                     } else {
