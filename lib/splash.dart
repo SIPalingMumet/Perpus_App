@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(
-        child: Image.asset('assets/images/download.png'), // Pastikan gambar ini ada di folder assets dan terdaftar di pubspec.yaml
+        child: Image.asset('assets/images/oshimen.jpg'), // Pastikan gambar ini ada di folder assets dan terdaftar di pubspec.yaml
       ),
     );
   }

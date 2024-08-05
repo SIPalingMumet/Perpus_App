@@ -27,6 +27,6 @@ flutter:
   uses-material-design: true
   
   assets:
-    - assets/images/download.jpg
+    - assets/images/oshimen.jpg
     - assets/images/kuskus.jpg
 
