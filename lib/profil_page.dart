@@ -15,10 +15,35 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+      final fileExtension = pickedFile.path.split('.').last.toLowerCase();
+      if (fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png') {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      } else {
+        _showInvalidImageFormatDialog(context);
+      }
     }
+  }
+
+  void _showInvalidImageFormatDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Invalid Image Format'),
+          content: Text('Please select an image with a valid format (JPG, JPEG, PNG).'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _editProfile(BuildContext context) {
@@ -53,7 +78,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             TextButton(
               onPressed: () {
-                // Validate email input
                 if (emailController.text.contains('@')) {
                   setState(() {
                     _name = nameController.text;
@@ -102,14 +126,14 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cancel action
+                Navigator.of(context).pop();
               },
               child: Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 _pickImage();
-                Navigator.of(context).pop(); // Confirm action
+                Navigator.of(context).pop();
               },
               child: Text('Yes'),
             ),
